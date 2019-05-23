@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/Shabanisimo/vironitChatBackend/issues"
   },
-  "homepage": "https://github.com/Shabanisimo/vironitChatBackend#readme"
+  "homepage": "https://github.com/Shabanisimo/vironitChatBackend#readme",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "husky": "^2.3.0",
+    "jest": "^24.8.0"
+  }
 }
