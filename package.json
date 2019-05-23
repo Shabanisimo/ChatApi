@@ -1,0 +1,19 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shabanisimo/vironitChatBackend.git"
+  },
+  "author": "Ilya Sharupich",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shabanisimo/vironitChatBackend/issues"
+  },
+  "homepage": "https://github.com/Shabanisimo/vironitChatBackend#readme"
+}
