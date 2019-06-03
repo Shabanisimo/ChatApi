@@ -1,8 +1,17 @@
 // require modules
-const net = require('net');
+const express = require('express');
+const http = require('http');
+const socket = require('socket.io');
+
+const port = 3020;
+
+const app = express();
+const server = http.createServer(app);
+const io = socket(server);
+
 const func = require('./functions');
 const logger = require('./logger/logger');
-const env = require('dotenv').config();
+
 
 // variables
 const sockets = [];
@@ -23,12 +32,11 @@ const commandsList = {
     func.createRoom(user, roomName, rooms);
   },
   '/inviteToRoom': (user, roomName, inviteUser) => {
+    inviteUser = func.returnUser(inviteUser, sockets);
     if (roomName && inviteUser) {
       func.inviteToRoom(user, roomName, inviteUser, rooms);
     } else {
-      (
-        user.write('Что-то не так с данными при добавлении челивка в чат.' + '\n')
-      );
+      user.send('Что-то не так с данными при добавлении челивка в чат.' + '\n');
     }
   },
   '/enterRoom': (user, roomName) => {
@@ -41,10 +49,10 @@ const commandsList = {
       if (userInRoom) {
         func.enterRoom(user, roomName);
       } else {
-        user.write('Извини, но тебя нет в списке.\n');
+        user.send('Извини, но тебя нет в списке.\n');
       }
     } else {
-      user.write('Извини, но такой комноты нет.\n');
+      user.send('Извини, но такой комноты нет.\n');
     }
   },
   '/exit': (user) => {
@@ -54,11 +62,9 @@ const commandsList = {
 
 // output data for user
 function broadcast(sender, msg) {
-  logger(msg);
   sockets.forEach((socket) => {
-    if (socket.nickName === sender.nickName) return;
     if (socket.chat === sender.chat) {
-      socket.write(`${msg}\n`);
+      socket.emit('msg', msg);
     }
   });
 }
@@ -69,38 +75,44 @@ function removeClient(client) {
 }
 
 // subscribes to events
-const server = net.createServer((socket) => {
+io.on('connection', (socket) => {
+  let msg;
   clientId += 1;
   socket.nickName = `User${clientId}`;
   socket.chat = 'common';
   const clientName = socket.nickName;
 
   sockets.push(socket);
-  socket.write('Ты подключился.\n');
 
-  broadcast(socket, `${clientName} joined this chat.`);
+  msg = {text: `${clientName} joined this chat.`, type: 0};
+  broadcast(socket, msg);
 
-  socket.on('data', (data) => {
+  socket.on('message', (data) => {
+    console.log(data);
     if (data.toString()[0] === '/') {
       const newData = data.toString().match(regexp);
       const command = commandsList[newData[0]];
       if (command !== undefined) {
         const param = data.toString().split(' ')[1];
         const param2 = data.toString().split(' ')[2];
-        socket.write('--------------------------\n');
         command(socket, param, param2);
       } else {
         func.helper(socket, commandsList);
       }
     } else {
-      const msg = `${func.getDate()} : ${clientName} > ${data}`;
+      msg = {
+        sender: socket.nickName,
+        text: data.toString(),
+        date: func.getDate(),
+        type: 1
+      }
       broadcast(socket, msg);
     }
   });
 
-  socket.on('end', () => {
-    const msg = `${clientName} left this chat.`;
-
+  socket.on('disconnect', () => {
+    let msg = {text: `${clientName} left this chat.`, type: 0};
+    
     removeClient(clientName);
 
     broadcast(socket, msg);
@@ -110,10 +122,8 @@ const server = net.createServer((socket) => {
   });
 });
 
-server.on('error', (err) => {
+io.on('error', (err) => {
   logger(`Something wrong: ${err}`);
 });
 
-server.listen(env.PORT, () => {
-  logger(`Server listen port ${env.PORT}`);
-});
+server.listen(port, () => console.log(`LISTENING ON PORT ${port}`));

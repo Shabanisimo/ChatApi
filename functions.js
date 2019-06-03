@@ -9,56 +9,58 @@ function getDate() {
 }
 
 function helper(user, list) {
-  Object.keys(list).map(com => user.write(`${com}\n`));
+  Object.keys(list).map(com => user.send(`${com}\n`));
 }
 
 function showUserList(user, list) {
-  list.map(u => user.write(`${u.nickName}\n`));
+  list.map(u => user.send(`${u.nickName}\n`));
 }
 
 function createRoom(user, msg, rooms) {
-  if (msg) {
-    msg.toString().trim();
-
-    const userInfo = {};
-    userInfo.nickName = user.nickName;
-    userInfo.type = 'isAdmin';
-    userInfo.state = 'live';
-
-    const newRoom = {};
-    newRoom[msg] = [];
-    newRoom[msg].push(userInfo);
-    rooms.push(newRoom);
-
-    user.write(`Вы создали чат: ${msg}\n`);
+  msg.toString().trim();
+  let room = Object.keys(rooms).indexOf(msg);
+  if (room < 0) {
+    if (msg) {
+      msg.toString().trim();
+  
+      const newRoom = {};
+      newRoom[msg] = [];
+      newRoom[msg].push(user);
+      rooms.push(newRoom);
+  
+      user.send(`Вы создали чат: ${msg}\n`);
+    } else {
+      user.send('Ты забыл написать название чата.' + '\n');
+    }
   } else {
-    user.write('Ты забыл написать название чата.' + '\n');
+    user.send('Такая комната есть.')
   }
 }
 
 function inviteToRoom(user, roomName, inviteUser, rooms) {
-  const userInfo = {};
-  userInfo.nickName = inviteUser;
-  userInfo.type = 'isUser';
-
   roomName.toString().trim();
-
-  rooms.forEach(room => (Object.keys(room)[0] === roomName
-    ? room[roomName].push(inviteUser)
-    : user.write('Такого чата нет.' + '\n')));
-
-  user.write(`Вы пригласили ${inviteUser} в чат ${roomName}\n`);
+  let room = rooms.filter(r => Object.keys(r).indexOf(roomName) >= 0);
+  let iUser = room[0][roomName].filter(u => u.nickName === inviteUser.nickName);
+  if (iUser.length === 0) {
+    rooms.forEach(room => (Object.keys(room)[0] === roomName
+      ? room[roomName].push(inviteUser)
+      : user.send('Такого чата нет.' + '\n')));
+  
+    user.send(`Вы пригласили ${inviteUser.nickName} в чат ${roomName}\n`);
+  } else {
+    user.send(`Пользователь ${inviteUser.nickName} уже добавлен.\n`)
+  }
 }
 
 function showRooms(user, list) {
-  list.map(room => user.write(`${Object.keys(room)}\n`));
+  list.map(room => user.send(`${Object.keys(room)}\n`));
 }
 
 function exitFromRoom(user) {
   if (user.chat !== 'common') {
     user.chat = 'common';
   } else {
-    user.write('Извини, но ты и так в общем чате.');
+    user.send('Извини, но ты и так в общем чате.');
   }
 }
 
@@ -66,8 +68,13 @@ function enterRoom(user, roomName) {
   if (user.chat !== roomName) {
     user.chat = roomName;
   } else {
-    user.write('Что ты делаешь? Ты и так в этом чате.');
+    user.send('Что ты делаешь? Ты и так в этом чате.');
   }
+}
+
+function returnUser(userName, userList) {
+  let retUser = userList.filter(user => user.nickName === userName);
+  return retUser[0];
 }
 
 module.exports = {
@@ -79,4 +86,5 @@ module.exports = {
   inviteToRoom,
   exitFromRoom,
   enterRoom,
+  returnUser,
 };
