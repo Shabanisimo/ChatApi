@@ -3,7 +3,7 @@ const express = require('express');
 const http = require('http');
 const socket = require('socket.io');
 
-const port = 3020;
+const port = 3010;
 
 const app = express();
 const server = http.createServer(app);
@@ -16,7 +16,9 @@ const logger = require('./logger/logger');
 // variables
 const sockets = [];
 let clientId = 0;
-const rooms = [];
+const rooms = {
+  'common': [],
+};
 const regexp = '\/([a-zA-Z]*)';
 const commandsList = {
   '/help': (user) => {
@@ -41,13 +43,12 @@ const commandsList = {
   },
   '/enterRoom': (user, roomName) => {
     roomName.toString().trim();
-    const correctlyRoom = rooms
-      .find(r => r[roomName]);
-    if (correctlyRoom) {
-      const userInRoom = correctlyRoom[roomName]
+    if (rooms[roomName]) {
+      const userInRoom = rooms[roomName]
         .map(obj => obj.nickName === user.nickName);
       if (userInRoom) {
         func.enterRoom(user, roomName);
+        user.emit("changeRoom", []);
       } else {
         user.send('Извини, но тебя нет в списке.\n');
       }

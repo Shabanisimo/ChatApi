@@ -1,3 +1,5 @@
+const log = require('./logger/logger');
+
 function getDate() {
   let today = new Date();
   const dd = String(today.getDate()).padStart(2, '0');
@@ -18,57 +20,56 @@ function showUserList(user, list) {
 
 function createRoom(user, msg, rooms) {
   msg.toString().trim();
-  let room = Object.keys(rooms).indexOf(msg);
-  if (room < 0) {
+  let room = rooms[msg];
+  if (!room) {
     if (msg) {
       msg.toString().trim();
-  
-      const newRoom = {};
-      newRoom[msg] = [];
-      newRoom[msg].push(user);
-      rooms.push(newRoom);
-  
-      user.send(`Вы создали чат: ${msg}\n`);
+
+      rooms[msg] = [];
+      rooms[msg].push(user);
+
+      log(`Вы создали чат: ${msg}`, user); 
     } else {
-      user.send('Ты забыл написать название чата.' + '\n');
+      log('Ты забыл написать название чата.', user);
     }
   } else {
-    user.send('Такая комната есть.')
+    log('Такая комната есть.', user)
   }
 }
 
 function inviteToRoom(user, roomName, inviteUser, rooms) {
   roomName.toString().trim();
-  let room = rooms.filter(r => Object.keys(r).indexOf(roomName) >= 0);
-  let iUser = room[0][roomName].filter(u => u.nickName === inviteUser.nickName);
-  if (iUser.length === 0) {
-    rooms.forEach(room => (Object.keys(room)[0] === roomName
-      ? room[roomName].push(inviteUser)
-      : user.send('Такого чата нет.' + '\n')));
-  
-    user.send(`Вы пригласили ${inviteUser.nickName} в чат ${roomName}\n`);
+  if (rooms[roomName]) {
+    let iUser = rooms[roomName].filter(u => u.nickName === inviteUser.nickName);
+    if (iUser.length === 0) {
+      rooms[roomName].push(inviteUser);
+      log(`Пользователь ${inviteUser.nickName} добавлен.`, user)
+    } else {
+      log(`Пользователь ${inviteUser.nickName} уже добавлен.`, user)
+    }
   } else {
-    user.send(`Пользователь ${inviteUser.nickName} уже добавлен.\n`)
+    log(`Такой комнаты не существует.`, user);
   }
 }
 
-function showRooms(user, list) {
-  list.map(room => user.send(`${Object.keys(room)}\n`));
+function showRooms(user, rooms) {
+  log(`${Object.keys(rooms)}`, user)
 }
 
 function exitFromRoom(user) {
   if (user.chat !== 'common') {
     user.chat = 'common';
   } else {
-    user.send('Извини, но ты и так в общем чате.');
+    log('Извини, но ты и так в общем чате.', user)
   }
 }
 
 function enterRoom(user, roomName) {
   if (user.chat !== roomName) {
     user.chat = roomName;
+    
   } else {
-    user.send('Что ты делаешь? Ты и так в этом чате.');
+    log('Что ты делаешь? Ты и так в этом чате.', user)
   }
 }
 
