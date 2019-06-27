@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
-    "start": "nodemon ./src/index.js",
+    "start": "nodemon ./index.js",
     "lint": "eslint ",
     "lint:f": "eslint --fix"
   },

@@ -5,11 +5,11 @@ const socket = require('socket.io');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
-const getDate = require('./functions/functions');
+const getDate = require('./src/functions/functions');
 
-const {User, Room, Message} = require('./database/connection');
+const {User, Room, Message} = require('./src/database/connection');
 
-const port = 3030;
+const port = process.env.PORT || 5000;
 
 const app = express();
 app.use(cors());
@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-const logger = require('./logger/logger');
+const logger = require('./src/logger/logger');
 
 
 // variables
@@ -84,9 +84,9 @@ io.on('error', (err) => {
   logger(`Something wrong: ${err}`);
 });
 
-app.use('/api/user', require('./routes/user'));
-app.use('/api/room', require('./routes/room'));
-app.use('/api/message', require('./routes/message'));
+app.use('/api/user', require('./src/routes/user'));
+app.use('/api/room', require('./src/routes/room'));
+app.use('/api/message', require('./src/routes/message'));
 
 server.listen(port, () => {
   console.log(`LISTENING ON PORT ${port}`)
