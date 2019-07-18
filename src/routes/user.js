@@ -15,7 +15,7 @@ router.post('/signin/google', (req, res) => {
               name: user.given_name,
               surname: user.family_name,
               imgUrl: user.picture,
-              email: user.email,
+              email: String(user.email).toLowerCase(),
               token: uuid()
           },
           attributes:['name', 'surname', 'imgUrl', 'email', 'token']
@@ -28,7 +28,7 @@ router.post('/getInfo', (req, res) => {
     User.findOne(
       { 
         where: {token: req.body.token },
-        attributes:['name', 'surname', 'imgUrl', 'email']
+        attributes:['name', 'surname', 'imgUrl', 'email', 'token']
       })
       .then(data => res.send(data))
       .catch(err => console.log('ERROR ' + err));
@@ -39,7 +39,7 @@ router.post('/registration', (req, res) => {
   const user = req.body;
   const emailValid = regExp.test(String(user.email).toLowerCase());
   User.findOne({
-    where: {email: user.email}
+    where: {email: String(user.email).toLowerCase()}
   })
   .then(data => {
     if (data) {
@@ -56,9 +56,8 @@ router.post('/registration', (req, res) => {
           {
             name: user.name,
             surname: user.surname,
-            email: user.email,
+            email: String(user.email).toLowerCase(),
             password: passwordHash.generate(user.password),
-            imgUrl: 'http://ib.tsu.ru/wp-content/uploads/2017/10/no-ava-300x300.png',
             token: uuid()
           },
           {attributes:['name', 'surname', 'imgUrl', 'token', 'email']}
@@ -74,25 +73,30 @@ router.post('/registration', (req, res) => {
   })
 });
 
+const error = 'Wrong data';
+
 router.post('/signin', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   User.findOne({
-    where: {email: email}
+    where: {email: String(email).toLowerCase()}
   })
   .then(data => {
-    if (passwordHash.verify(password, data.password)) {
-      res.send({
-        name: data.name, 
-        surname: data.surname,
-        email: data.email,
-        imgUrl: data.imgUrl,
-        token: data.token
+    if (data) {
+      if (passwordHash.verify(password, data.password)) {
+        res.send({
+          name: data.name, 
+          surname: data.surname,
+          email: data.email,
+          imgUrl: data.imgUrl,
+          token: data.token
+        }
+      );
+      } else {
+        res.status(400).send({ error });
       }
-    );
     } else {
-      const error = 'Wrong data';
-      res.status({ error });
+      res.status(400).send({ error });
     }
   })
 })
