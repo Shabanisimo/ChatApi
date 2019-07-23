@@ -15,6 +15,8 @@ const Message = MessageModel(sequelize, Sequelize);
 
 User.belongsToMany(Room, {through: UserRoom, unique: false});
 Room.belongsToMany(User, {through: UserRoom, unique: false});
+UserRoom.belongsTo(User);
+UserRoom.belongsTo(Room);
 
 User.hasMany(Message, {
     foreignKey: {

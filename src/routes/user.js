@@ -28,7 +28,7 @@ router.post('/getInfo', (req, res) => {
     User.findOne(
       { 
         where: {token: req.body.token },
-        attributes:['name', 'surname', 'imgUrl', 'email', 'token']
+        attributes:['name', 'surname', 'imgUrl', 'email', 'token', 'id']
       })
       .then(data => res.send(data))
       .catch(err => console.log('ERROR ' + err));
@@ -108,7 +108,6 @@ router.get('/getUserList', (req, res) => {
     .then(data => {
       res.send(data);
     })
-
 })
 
 module.exports = router;

@@ -8,10 +8,11 @@ router.post('/load', (req, res) => {
     Room.findByPk(req.body.id)
         .then(room => {
             room.getMessages({
-                include: [{model: User, as: 'Sender', attributes:['name', 'surname', 'imgUrl', 'token', 'email']}],
+                include: [{model: User, as: 'Sender', attributes:['name', 'imgUrl', 'token']}],
                 order: [
                     ['id', 'ASC']
-                ]
+                ],
+                attributes: ['createdAt', 'id', 'messageText', 'SenderId'],
             })
                 .then(data => res.send(data));
         });

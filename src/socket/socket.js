@@ -1,8 +1,9 @@
 const socket = require('socket.io');
 const getDate = require('../functions/functions');
 const clientsConnectionList = require('../clientsConnectonList/clientsConnectionList');
+const { getUserRoomsTest } = require('../methods/room')
 
-const {User, Message} = require('../database/connection');
+const {User, Message, Room} = require('../database/connection');
 
 module.exports = class Socket {
   constructor(server) {
@@ -12,14 +13,14 @@ module.exports = class Socket {
   startConnection() {
     this.io.on('connection', (socket) => {
       socket.on('conn', (data) => {
+        getUserRoomsTest(data.token)
+          .then(data => {
+            data.dataValues.Rooms.map(room => {
+              console.log(room.dataValues.id)
+              socket.join(room.dataValues.id);
+            })
+          })
         clientsConnectionList.addConnection(socket, data.token);
-      });
-        
-      socket.on('changeRoom', (data) => {
-        console.log(data);
-        socket.leave(data.prevId, () => {
-          socket.join(data.id);
-        });
       });
           
       socket.on('message.send', (data) => {
@@ -41,7 +42,6 @@ module.exports = class Socket {
                     surname: user.surname,
                     imgUrl: user.imgUrl,
                     token: user.token,
-                    email: user.email
                   }
                   msg = {...msg, Sender};
                   this.io.sockets.in(data.roomId).emit('message.sent', msg);
