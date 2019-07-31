@@ -17,9 +17,6 @@ socket.startConnection();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.get('/', (req, res) => {
-  res.send(`It is my <Noname/> chat API`);
-})
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/api/user', require('./src/routes/user'));
 app.use('/api/room', require('./src/routes/room'));

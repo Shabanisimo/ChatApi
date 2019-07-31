@@ -3,7 +3,7 @@ const UserModel = require('../models/User');
 const RoomModel = require('../models/Room');
 const MessageModel = require('../models/Messages');
 
-const sequelize = new Sequelize('Chat', 'root', '', {host: "https://noname-chat-api.herokuapp.com", dialect: "mysql", operatorsAliases: false});
+const sequelize = new Sequelize('Chat', 'root', '', {host: "127.0.0.1", dialect: "mysql"});
 
 global.sequelize = sequelize;
 

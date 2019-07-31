@@ -9,18 +9,13 @@ function getUserRooms(token) {
                 user.getRooms({
                     attributes: ['id', 'name', 'imgUrl', 'token'],
                     include: [
-                        {model: User},
+                        {
+                            model: User,
+                            attributes:['name', 'surname', 'imgUrl', 'email', 'token', 'id']
+                        },
                         {
                             model: Message, 
-                            order: [ [ 'createdAt', 'DESC' ]], 
-                            attributes: ['messageText', 'date', 'id', 'createdAt'],
-                            include: [
-                                {
-                                    model: User, 
-                                    as: 'Sender', 
-                                    attributes:['name', 'imgUrl', 'token']
-                                }
-                            ]
+                            attributes: ['messageText', 'date', 'id', 'createdAt', 'SenderId'],
                         },
                     ],  
                 })
@@ -34,7 +29,7 @@ function getUserRooms(token) {
     })
 };
 
-function getUserRoomsTest(token) {
+function getUserRoomsToConnection(token) {
     return new Promise((resolve, reject) => {
         User.findOne({
             where: {token: token},
@@ -57,4 +52,4 @@ function getList() {
     })
 }
 
-module.exports = { getUserRooms, getList, getUserRoomsTest };
+module.exports = { getUserRooms, getList, getUserRoomsToConnection };

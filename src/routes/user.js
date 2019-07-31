@@ -4,6 +4,7 @@ const passwordHash = require('password-hash');
 const jwt = require('jsonwebtoken');
 
 const { User } = require('../database/connection');
+const error = 'Wrong data';
 
 
 router.post('/signin/google', (req, res) => {
@@ -44,7 +45,7 @@ router.post('/registration', (req, res) => {
   .then(data => {
     if (data) {
       const error = 'Wrong data';
-      res.status({ error });
+      res.status(400).send({ error });
     } else {
       if (
         emailValid
@@ -66,14 +67,12 @@ router.post('/registration', (req, res) => {
         .catch(err => console.log('ERROR ' + err));
       }
       else {
-        const error = 'Wrong data';
-        res.status({ error });
+        res.status(400).send({ error });
       }
     }
   })
 });
 
-const error = 'Wrong data';
 
 router.post('/signin', (req, res) => {
   const email = req.body.email;
@@ -107,6 +106,27 @@ router.get('/getUserList', (req, res) => {
   })
     .then(data => {
       res.send(data);
+    })
+})
+
+router.put('/updateUserInfo', (req, res) => {
+  const {token, name, surname, email} = req.body;
+  User.findOne({
+    where: {token: token}
+  })
+    .then(user => {
+      user.update({
+        name: name,
+        surname: surname,
+        email: email,
+      })
+        .then(() => {
+          res.send({
+            name: name,
+            surname: surname,
+            email: email,
+          })
+        })
     })
 })
 

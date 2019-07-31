@@ -56,7 +56,7 @@ router.post('/getRoomInfo', (req, res) => {
         .then(data => res.send(data))
 })
 
-router.get('/getList', async (req, res) => {
+router.get('/getRoomsList', async (req, res) => {
     await getList()
         .then(data => res.send(data));
 })

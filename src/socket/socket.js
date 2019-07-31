@@ -1,7 +1,7 @@
 const socket = require('socket.io');
 const getDate = require('../functions/functions');
 const clientsConnectionList = require('../clientsConnectonList/clientsConnectionList');
-const { getUserRoomsTest } = require('../methods/room')
+const { getUserRoomsToConnection } = require('../methods/room')
 
 const {User, Message, Room} = require('../database/connection');
 
@@ -13,10 +13,9 @@ module.exports = class Socket {
   startConnection() {
     this.io.on('connection', (socket) => {
       socket.on('conn', (data) => {
-        getUserRoomsTest(data.token)
+        getUserRoomsToConnection(data.token)
           .then(data => {
             data.dataValues.Rooms.map(room => {
-              console.log(room.dataValues.id)
               socket.join(room.dataValues.id);
             })
           })
