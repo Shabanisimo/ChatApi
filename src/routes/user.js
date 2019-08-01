@@ -39,6 +39,7 @@ router.post('/registration', (req, res) => {
   const regExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   const user = req.body;
   const emailValid = regExp.test(String(user.email).toLowerCase());
+  console.log(req.body)
   User.findOne({
     where: {email: String(user.email).toLowerCase()}
   })
