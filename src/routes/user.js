@@ -1,10 +1,12 @@
 const router = require('express').Router();
 const uuid = require('uuid/v1');
+const upload = require('../multer/multer');
 const passwordHash = require('password-hash');
 const jwt = require('jsonwebtoken');
 
 const { User } = require('../database/connection');
 const error = 'Wrong data';
+
 
 
 router.post('/signin/google', (req, res) => {
@@ -108,6 +110,14 @@ router.get('/getUserList', (req, res) => {
     .then(data => {
       res.send(data);
     })
+})
+
+router.post('/upload/image', upload.single('avatar'), (req, res) => {
+  console.log('file', req.files)
+  console.log('body', req.body)
+  res.status(200).json({
+    message: 'success!',
+  })
 })
 
 router.put('/updateUserInfo', (req, res) => {
