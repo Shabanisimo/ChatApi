@@ -1,19 +1,21 @@
-const clientsConnectionList = {
-    socketsStore: [],
+const logger = require('../logger/logger');
 
-    addConnection(socket, userId) {
-      const clientConnection = {
-          userId,
-          socket
-      };
-      this.socketsStore.push(clientConnection); 
-      console.log(this.socketsStore)
-    },
-  
-    removeConnection(socket) {
-      this.socketsStore = this.socketsStore.filter(s => socket !== s.socket);
-      console.log(this.socketsStore)
-    },
-}
+const clientsConnectionList = {
+  socketsStore: [],
+
+  addConnection(socket, userId) {
+    const clientConnection = {
+      userId,
+      socket,
+    };
+    this.socketsStore.push(clientConnection);
+    logger(this.socketsStore);
+  },
+
+  removeConnection(socket) {
+    this.socketsStore = this.socketsStore.filter((s) => socket !== s.socket);
+    logger(this.socketsStore);
+  },
+};
 
 module.exports = clientsConnectionList;

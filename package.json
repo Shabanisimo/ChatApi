@@ -7,8 +7,8 @@
     "test": "jest --coverage",
     "watch": "nodemon ./index.js",
     "start": "node ./index.js",
-    "lint": "eslint ",
-    "lint:f": "eslint --fix"
+    "lint": "eslint ./src",
+    "lint:f": "eslint ./src --fix"
   },
   "repository": {
     "type": "git",
@@ -21,7 +21,9 @@
   },
   "homepage": "https://github.com/Shabanisimo/vironitChatBackend#readme",
   "devDependencies": {
-    "eslint": "^5.16.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.19.1",
     "husky": "^2.3.0",
     "jest": "^24.8.0",
     "nodemon": "^1.19.0"

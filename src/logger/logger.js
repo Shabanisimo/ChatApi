@@ -1,4 +1,3 @@
-module.exports = function logger(msg, user) {
+module.exports = function logger(msg) {
   console.log(msg);
-  user.emit('msg', {text: msg, type: 0})
 };
