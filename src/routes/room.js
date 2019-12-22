@@ -23,7 +23,6 @@ router.post('/createRoom', (req, res) => {
             },
           )
             .then((u) => {
-              console.log(u);
               room.addUsers(u.dataValues.id);
               clientConnectionLIst.socketsStore.forEach((client) => {
                 if (u.dataValues.token === client.userId) {

@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const Socket = require('./src/socket/socket');
 
-const port = process.env.PORT || 4050;
+const port = process.env.PORT || 3060;
 
 const app = express();
 app.use(cors());
@@ -23,5 +23,5 @@ app.use('/api/room', require('./src/routes/room'));
 app.use('/api/message', require('./src/routes/message'));
 
 server.listen(port, () => {
-  console.log(`LISTENING ON PORT ${port}`)
+  console.log(`LISTENING ON PORT ${port}`);
 });
