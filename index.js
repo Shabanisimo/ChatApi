@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const Socket = require('./src/socket/socket');
 
-const port = process.env.PORT || 3030;
+const port = process.env.PORT || 4050;
 
 const app = express();
 app.use(cors());
