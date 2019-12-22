@@ -3,7 +3,7 @@ const UserModel = require('../models/User');
 const RoomModel = require('../models/Room');
 const MessageModel = require('../models/Messages');
 
-const sequelize = new Sequelize('Chat', 'root', '!Lalkalol30', {host: "127.0.0.1", dialect: "mysql"});
+const sequelize = new Sequelize('Chat', 'root', 'rootroot', {host: "127.0.0.1", dialect: "mysql"});
 
 global.sequelize = sequelize;
 

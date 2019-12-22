@@ -27,10 +27,10 @@ router.post('/createRoom', (req, res) => {
                         room.addUsers(u);
                         clientConnectionLIst.socketsStore
                             .forEach(client => {
-                                u.dataValues.token === client.userId
-                                ? (client.socket.emit('addRoom', room),
-                                    client.socket.join(room.id))
-                                : null
+                              if (u.dataValues.token === client.userId){
+                                client.socket.emit('addRoom', room);
+                                client.socket.join(room.id);
+                              }
                             })
                     })
             })
