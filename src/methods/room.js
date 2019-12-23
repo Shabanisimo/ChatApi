@@ -7,7 +7,7 @@ function getUserRooms(token) {
     })
       .then((user) => {
         user.getRooms({
-          attributes: ['id', 'name', 'imgUrl', 'token'],
+          attributes: ['id', 'name', 'imgUrl', 'token', 'createdAt'],
           include: [
             {
               model: User,
